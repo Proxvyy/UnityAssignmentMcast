@@ -3,8 +3,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float speed = 6f;
-    public float minX = -2.2f;
-    public float maxX = 2.2f;
+    public float minX = -2.3f;
+    public float maxX = 2.3f;
 
     void Update()
     {
