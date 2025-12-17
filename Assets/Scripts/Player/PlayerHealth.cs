@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] int maxHealth = 100;
     [SerializeField] int currentHealth;
+    [SerializeField] string gameOverSceneName = "GameOver";
 
     void Awake()
     {
@@ -22,8 +24,13 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        Destroy(gameObject);
-        // GameOver logic later
+        ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
+        if (scoreManager != null)
+        {
+            scoreManager.ResetScore();
+        }
+
+        SceneManager.LoadScene(gameOverSceneName);
     }
 
     public int GetHealth()
