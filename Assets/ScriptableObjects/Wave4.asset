@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ee5cf45bdd64f48b5213c3c1890270, type: 3}
+  m_Name: Wave4
+  m_EditorClassIdentifier: 
+  obstaclePrefab: {fileID: 691946454582494893, guid: 9bb08ea0845bd9f42899c5fdb5b51ded, type: 3}
+  pathPrefab: {fileID: 2915669934957567882, guid: 3ab2405c8b606a247bf2f72bd66be47f, type: 3}
+  moveSpeed: 30
+  numberOfObstacles: 10
