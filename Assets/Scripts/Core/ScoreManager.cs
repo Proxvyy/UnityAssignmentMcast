@@ -4,6 +4,11 @@ public class ScoreManager : MonoBehaviour
 {
     int score = 0;
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     public void AddPoints(int points)
     {
         score += points;
