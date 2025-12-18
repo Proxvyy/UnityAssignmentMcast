@@ -1,132 +1,106 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [Header("Waves (ScriptableObjects)")]
-    [SerializeField] List<ObstacleWaveSO> waves = new List<ObstacleWaveSO>();
-    [SerializeField] int startingWaveIndex = 0;
-    [SerializeField] bool loopWaves = true;
+    [Header("Waves")]
+    public ObstacleWaveSO[] waves;
+    public int startingWaveIndex = 0;
+    public bool loopWaves = true;
 
     [Header("Timing")]
-    [SerializeField] float timeBetweenSpawns = 0.5f;   // delay between each spawned object
-    [SerializeField] float timeBetweenWaves = 1.0f;    // delay after finishing a wave
+    public float timeBetweenSpawns = 0.5f;
+    public float timeBetweenWaves = 1.0f;
 
-    [Header("Render (Optional)")]
-    [SerializeField] float spawnZ = -10f; // keep spawned things above road
-
-    Coroutine spawnRoutine;
+    int currentWaveIndex;
 
     void Start()
     {
-        if (waves == null || waves.Count == 0)
+        if (waves == null || waves.Length == 0)
         {
             Debug.LogError("WaveSpawner: No waves assigned.");
             return;
         }
 
-        if (startingWaveIndex < 0) startingWaveIndex = 0;
-        if (startingWaveIndex >= waves.Count) startingWaveIndex = 0;
-
-        spawnRoutine = StartCoroutine(SpawnWaveLoop());
+        currentWaveIndex = Mathf.Clamp(startingWaveIndex, 0, waves.Length - 1);
+        StartCoroutine(SpawnLoop());
     }
 
-    IEnumerator SpawnWaveLoop()
+    IEnumerator SpawnLoop()
     {
-        int waveIndex = startingWaveIndex;
-
         while (true)
         {
-            ObstacleWaveSO wave = waves[waveIndex];
+            ObstacleWaveSO wave = waves[currentWaveIndex];
 
             if (wave == null)
             {
-                Debug.LogError("WaveSpawner: Wave is missing at index " + waveIndex);
+                Debug.LogError("WaveSpawner: Wave is null at index " + currentWaveIndex);
                 yield break;
             }
 
-            yield return StartCoroutine(SpawnSingleWave(wave));
+            if (wave.pathPrefab == null)
+            {
+                Debug.LogError("WaveSpawner: Path Prefab is missing in wave " + wave.name);
+                yield break;
+            }
+
+            // IMPORTANT: instantiate the path prefab so waypoints exist in the scene + Awake runs
+            GameObject pathObj = Instantiate(wave.pathPrefab);
+            pathObj.name = wave.pathPrefab.name + "_Runtime";
+
+            Path path = pathObj.GetComponent<Path>();
+            if (path == null)
+            {
+                Debug.LogError("WaveSpawner: Path Prefab has no Path script in wave " + wave.name);
+                Destroy(pathObj);
+                yield break;
+            }
+
+            path.BuildWaypoints();
+
+            if (path.waypoints == null || path.waypoints.Count == 0)
+            {
+                Debug.LogError("WaveSpawner: Path has no waypoints in wave " + wave.name);
+                Destroy(pathObj);
+                yield break;
+            }
+
+            // Spawn all entries
+            for (int i = 0; i < wave.spawns.Count; i++)
+            {
+                ObstacleWaveSO.SpawnEntry entry = wave.spawns[i];
+                if (entry == null || entry.prefab == null || entry.count <= 0)
+                    continue;
+
+                for (int c = 0; c < entry.count; c++)
+                {
+                    GameObject obj = Instantiate(entry.prefab);
+
+                    PathFollower follower = obj.GetComponent<PathFollower>();
+                    if (follower == null)
+                    {
+                        Debug.LogError("WaveSpawner: Spawned object has no PathFollower: " + obj.name);
+                        Destroy(obj);
+                    }
+                    else
+                    {
+                        follower.SetPath(path);
+                        follower.SetSpeed(wave.moveSpeed);
+                    }
+
+                    yield return new WaitForSeconds(timeBetweenSpawns);
+                }
+            }
+
+
             yield return new WaitForSeconds(timeBetweenWaves);
 
-            waveIndex++;
+            currentWaveIndex++;
 
-            if (waveIndex >= waves.Count)
+            if (currentWaveIndex >= waves.Length)
             {
-                if (loopWaves)
-                {
-                    waveIndex = 0;
-                }
-                else
-                {
-                    yield break;
-                }
-            }
-        }
-    }
-
-    IEnumerator SpawnSingleWave(ObstacleWaveSO wave)
-    {
-        if (wave.PathPrefab == null)
-        {
-            Debug.LogError("WaveSpawner: PathPrefab missing in wave " + wave.name);
-            yield break;
-        }
-
-        Path path = wave.PathPrefab.GetComponent<Path>();
-        if (path == null)
-        {
-            Debug.LogError("WaveSpawner: PathPrefab has no Path component in wave " + wave.name);
-            yield break;
-        }
-
-        if (path.waypoints == null || path.waypoints.Count == 0)
-        {
-            Debug.LogError("WaveSpawner: Path has no waypoints in wave " + wave.name);
-            yield break;
-        }
-
-        // Spawn each entry in the wave spawn list (Obstacle, PointGiver, etc.)
-        List<ObstacleWaveSO.SpawnEntry> spawnList = wave.SpawnList;
-        if (spawnList == null || spawnList.Count == 0)
-        {
-            Debug.LogError("WaveSpawner: SpawnList is empty in wave " + wave.name);
-            yield break;
-        }
-
-        int i;
-        for (i = 0; i < spawnList.Count; i++)
-        {
-            ObstacleWaveSO.SpawnEntry entry = spawnList[i];
-
-            if (entry.prefab == null)
-            {
-                Debug.LogError("WaveSpawner: Missing prefab in wave " + wave.name);
-                continue;
-            }
-
-            int c;
-            for (c = 0; c < entry.count; c++)
-            {
-                GameObject spawned = Instantiate(entry.prefab);
-
-                // Spawn at first waypoint position
-                Vector3 startPos = path.waypoints[0].position;
-                spawned.transform.position = new Vector3(startPos.x, startPos.y, spawnZ);
-
-                // Force the follower to use this wave path and speed
-                PathFollower follower = spawned.GetComponent<PathFollower>();
-                if (follower != null)
-                {
-                    follower.SetPath(path);
-                    follower.SetSpeed(wave.MoveSpeed);
-                }
-                else
-                {
-                    Debug.LogError("WaveSpawner: " + spawned.name + " has no PathFollower component.");
-                }
-
-                yield return new WaitForSeconds(timeBetweenSpawns);
+                if (loopWaves) currentWaveIndex = 0;
+                else yield break;
             }
         }
     }

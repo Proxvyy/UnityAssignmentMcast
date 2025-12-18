@@ -7,6 +7,19 @@ public class Path : MonoBehaviour
 
     void Awake()
     {
+        BuildWaypoints();
+    }
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        // Keeps the list correct in editor too
+        BuildWaypoints();
+    }
+#endif
+
+    public void BuildWaypoints()
+    {
         waypoints.Clear();
 
         for (int i = 0; i < transform.childCount; i++)
