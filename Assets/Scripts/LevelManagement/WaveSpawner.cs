@@ -4,54 +4,58 @@ using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [Header("Waves")]
+    [Header("Waves (ScriptableObjects)")]
     [SerializeField] List<ObstacleWaveSO> waves = new List<ObstacleWaveSO>();
     [SerializeField] int startingWaveIndex = 0;
     [SerializeField] bool loopWaves = true;
 
     [Header("Timing")]
-    [SerializeField] float timeBetweenSpawns = 0.5f;
-    [SerializeField] float timeBetweenWaves = 1.0f;
+    [SerializeField] float timeBetweenSpawns = 0.5f;   // delay between each spawned object
+    [SerializeField] float timeBetweenWaves = 1.0f;    // delay after finishing a wave
 
-    int currentWaveIndex = 0;
+    [Header("Render (Optional)")]
+    [SerializeField] float spawnZ = -10f; // keep spawned things above road
 
-    // cache path lookups so we don't search every spawn
-    Dictionary<string, Path> pathCache = new Dictionary<string, Path>();
+    Coroutine spawnRoutine;
 
     void Start()
     {
         if (waves == null || waves.Count == 0)
         {
-            Debug.LogError("WaveSpawner has no waves assigned.");
+            Debug.LogError("WaveSpawner: No waves assigned.");
             return;
         }
 
-        if (startingWaveIndex < 0 || startingWaveIndex >= waves.Count)
-        {
-            startingWaveIndex = 0;
-        }
+        if (startingWaveIndex < 0) startingWaveIndex = 0;
+        if (startingWaveIndex >= waves.Count) startingWaveIndex = 0;
 
-        currentWaveIndex = startingWaveIndex;
-        StartCoroutine(RunWaves());
+        spawnRoutine = StartCoroutine(SpawnWaveLoop());
     }
 
-    IEnumerator RunWaves()
+    IEnumerator SpawnWaveLoop()
     {
+        int waveIndex = startingWaveIndex;
+
         while (true)
         {
-            ObstacleWaveSO wave = waves[currentWaveIndex];
+            ObstacleWaveSO wave = waves[waveIndex];
 
-            yield return StartCoroutine(SpawnWave(wave));
+            if (wave == null)
+            {
+                Debug.LogError("WaveSpawner: Wave is missing at index " + waveIndex);
+                yield break;
+            }
 
+            yield return StartCoroutine(SpawnSingleWave(wave));
             yield return new WaitForSeconds(timeBetweenWaves);
 
-            currentWaveIndex++;
+            waveIndex++;
 
-            if (currentWaveIndex >= waves.Count)
+            if (waveIndex >= waves.Count)
             {
                 if (loopWaves)
                 {
-                    currentWaveIndex = 0;
+                    waveIndex = 0;
                 }
                 else
                 {
@@ -61,74 +65,69 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnWave(ObstacleWaveSO wave)
+    IEnumerator SpawnSingleWave(ObstacleWaveSO wave)
     {
-        if (wave == null || wave.spawns == null || wave.spawns.Count == 0)
+        if (wave.PathPrefab == null)
         {
+            Debug.LogError("WaveSpawner: PathPrefab missing in wave " + wave.name);
             yield break;
         }
 
-        Path scenePath = GetScenePathForWave(wave);
-
-        for (int i = 0; i < wave.spawns.Count; i++)
+        Path path = wave.PathPrefab.GetComponent<Path>();
+        if (path == null)
         {
-            ObstacleWaveSO.SpawnEntry entry = wave.spawns[i];
+            Debug.LogError("WaveSpawner: PathPrefab has no Path component in wave " + wave.name);
+            yield break;
+        }
 
-            if (entry.prefab == null || entry.count <= 0)
+        if (path.waypoints == null || path.waypoints.Count == 0)
+        {
+            Debug.LogError("WaveSpawner: Path has no waypoints in wave " + wave.name);
+            yield break;
+        }
+
+        // Spawn each entry in the wave spawn list (Obstacle, PointGiver, etc.)
+        List<ObstacleWaveSO.SpawnEntry> spawnList = wave.SpawnList;
+        if (spawnList == null || spawnList.Count == 0)
+        {
+            Debug.LogError("WaveSpawner: SpawnList is empty in wave " + wave.name);
+            yield break;
+        }
+
+        int i;
+        for (i = 0; i < spawnList.Count; i++)
+        {
+            ObstacleWaveSO.SpawnEntry entry = spawnList[i];
+
+            if (entry.prefab == null)
             {
+                Debug.LogError("WaveSpawner: Missing prefab in wave " + wave.name);
                 continue;
             }
 
-            for (int j = 0; j < entry.count; j++)
+            int c;
+            for (c = 0; c < entry.count; c++)
             {
-                SpawnOne(entry.prefab, scenePath, wave.moveSpeed);
+                GameObject spawned = Instantiate(entry.prefab);
+
+                // Spawn at first waypoint position
+                Vector3 startPos = path.waypoints[0].position;
+                spawned.transform.position = new Vector3(startPos.x, startPos.y, spawnZ);
+
+                // Force the follower to use this wave path and speed
+                PathFollower follower = spawned.GetComponent<PathFollower>();
+                if (follower != null)
+                {
+                    follower.SetPath(path);
+                    follower.SetSpeed(wave.MoveSpeed);
+                }
+                else
+                {
+                    Debug.LogError("WaveSpawner: " + spawned.name + " has no PathFollower component.");
+                }
+
                 yield return new WaitForSeconds(timeBetweenSpawns);
             }
         }
-    }
-
-    void SpawnOne(GameObject prefabToSpawn, Path scenePath, float moveSpeed)
-    {
-        GameObject obj = Instantiate(prefabToSpawn, transform.position, Quaternion.identity);
-
-        PathFollower follower = obj.GetComponent<PathFollower>();
-        if (follower != null)
-        {
-            if (scenePath != null)
-            {
-                follower.SetPath(scenePath);
-            }
-
-            follower.SetSpeed(moveSpeed);
-        }
-    }
-
-    Path GetScenePathForWave(ObstacleWaveSO wave)
-    {
-        if (wave == null || wave.pathPrefab == null)
-        {
-            return null;
-        }
-
-        string pathName = wave.pathPrefab.name;
-
-        if (pathCache.ContainsKey(pathName) && pathCache[pathName] != null)
-        {
-            return pathCache[pathName];
-        }
-
-        // Find the Path component on the Path_WaveX object IN THE SCENE
-        Path[] allPaths = FindObjectsOfType<Path>();
-        for (int i = 0; i < allPaths.Length; i++)
-        {
-            if (allPaths[i] != null && allPaths[i].gameObject.name == pathName)
-            {
-                pathCache[pathName] = allPaths[i];
-                return allPaths[i];
-            }
-        }
-
-        Debug.LogError("Could not find scene Path object named: " + pathName);
-        return null;
     }
 }

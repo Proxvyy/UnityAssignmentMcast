@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawns:
   - prefab: {fileID: 691946454582494893, guid: 9bb08ea0845bd9f42899c5fdb5b51ded, type: 3}
-    count: 20
+    count: 15
   pathPrefab: {fileID: 7186466691235618733, guid: dbbf0892311507f4083be0248e72aa2f, type: 3}
-  moveSpeed: 20
+  moveSpeed: 10

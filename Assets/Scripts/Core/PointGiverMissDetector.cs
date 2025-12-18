@@ -1,26 +1,21 @@
 using UnityEngine;
 
-public class PointGiver : MonoBehaviour
+public class PointGiverMissDetector : MonoBehaviour
 {
-    [SerializeField] int points = 5;
+    [SerializeField] float destroyBelowY = -6.0f;
 
     bool resolved = false;
 
-    void OnTriggerEnter2D(Collider2D other)
+    void Update()
     {
         if (resolved)
         {
             return;
         }
 
-        if (other.CompareTag("Player"))
+        if (transform.position.y < destroyBelowY)
         {
             resolved = true;
-
-            if (ScoreManager.Instance != null)
-            {
-                ScoreManager.Instance.AddPoints(points);
-            }
 
             if (PointGiverProgressManager.Instance != null)
             {
