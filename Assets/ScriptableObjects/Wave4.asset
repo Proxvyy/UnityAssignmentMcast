@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6ee5cf45bdd64f48b5213c3c1890270, type: 3}
   m_Name: Wave4
   m_EditorClassIdentifier: 
-  obstaclePrefab: {fileID: 691946454582494893, guid: 9bb08ea0845bd9f42899c5fdb5b51ded, type: 3}
+  spawns:
+  - prefab: {fileID: 691946454582494893, guid: 9bb08ea0845bd9f42899c5fdb5b51ded, type: 3}
+    count: 20
   pathPrefab: {fileID: 2915669934957567882, guid: 3ab2405c8b606a247bf2f72bd66be47f, type: 3}
   moveSpeed: 30
-  numberOfObstacles: 10

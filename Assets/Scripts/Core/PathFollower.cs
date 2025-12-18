@@ -2,26 +2,35 @@ using UnityEngine;
 
 public class PathFollower : MonoBehaviour
 {
-    public Path path;
-    public float speed = 4f;
+    Path path;
+    float speed;
 
     int index = 0;
 
-    void Start()
+    public void SetPath(Path newPath)
     {
-        if (path == null || path.waypoints == null || path.waypoints.Count == 0)
-        {
-            Debug.LogError("No path assigned to " + gameObject.name);
-            enabled = false;
-            return;
-        }
+        path = newPath;
+        index = 0;
 
-        transform.position = path.waypoints[0].position;
-        index = 1;
+        if (path != null && path.waypoints != null && path.waypoints.Count > 0)
+        {
+            transform.position = path.waypoints[0].position;
+            index = 1;
+        }
+    }
+
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
     }
 
     void Update()
     {
+        if (path == null || path.waypoints == null || path.waypoints.Count == 0)
+        {
+            return;
+        }
+
         if (index >= path.waypoints.Count)
         {
             Destroy(gameObject);
@@ -29,7 +38,12 @@ public class PathFollower : MonoBehaviour
         }
 
         Vector3 target = path.waypoints[index].position;
-        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target,
+            speed * Time.deltaTime
+        );
 
         if (Vector3.Distance(transform.position, target) < 0.01f)
         {
