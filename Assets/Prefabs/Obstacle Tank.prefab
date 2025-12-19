@@ -190,6 +190,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 4
+  explosionPrefab: {fileID: 7494249214276923925, guid: 6574419452b7779419edb84d5685bada, type: 3}
+  hitSfx: {fileID: 8300000, guid: 3b225d2389ba69c4183e512ead46369c, type: 3}
+  hitSfxVolume: 1
 --- !u!114 &-3134838901281094673
 MonoBehaviour:
   m_ObjectHideFlags: 0

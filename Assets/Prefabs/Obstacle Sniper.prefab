@@ -128,7 +128,7 @@ BoxCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.03568715, y: -0.8357239}
   m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
+    border: {x: 1.5799999, y: 2.1499999, z: 1.48, w: 1.81}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 10.24, y: 10.24}
     newSize: {x: 1, y: 1}
@@ -190,6 +190,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 6
+  explosionPrefab: {fileID: 7494249214276923925, guid: 6574419452b7779419edb84d5685bada, type: 3}
+  hitSfx: {fileID: 8300000, guid: 3b225d2389ba69c4183e512ead46369c, type: 3}
+  hitSfxVolume: 1
 --- !u!114 &-8373520789989666824
 MonoBehaviour:
   m_ObjectHideFlags: 0
