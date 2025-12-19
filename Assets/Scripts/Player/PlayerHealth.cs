@@ -72,30 +72,66 @@ public class PlayerHealth : MonoBehaviour
 
         isDead = true;
 
+        // Spawn explosion particles
         if (explosionPrefab != null)
         {
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         }
 
+        // Play explosion sound in the world (works even if player gets disabled)
         if (explosionClip != null)
         {
             AudioSource.PlayClipAtPoint(explosionClip, transform.position, explosionVolume);
         }
 
+        // Reset session HP for next run
         if (GameSession.instance != null)
         {
             GameSession.instance.ResetSession();
         }
 
-        Destroy(gameObject);
+        // Disable player visuals + collisions so it "dies" immediately
+        DisablePlayerObject();
 
+        // IMPORTANT: Do NOT destroy the player before loading the scene,
+        // because this coroutine runs on this component.
         StartCoroutine(LoadGameOverAfterDelay());
+    }
+
+    private void DisablePlayerObject()
+    {
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+        int i = 0;
+        while (i < colliders.Length)
+        {
+            colliders[i].enabled = false;
+            i++;
+        }
+
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
+        int j = 0;
+        while (j < renderers.Length)
+        {
+            renderers[j].enabled = false;
+            j++;
+        }
+
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
+        }
     }
 
     private IEnumerator LoadGameOverAfterDelay()
     {
         yield return new WaitForSeconds(gameOverDelay);
         SceneManager.LoadScene(gameOverSceneName);
+
+        // Optional cleanup: if the player object still exists in this scene, destroy it.
+        // (After LoadScene, this object will be destroyed anyway unless it was DontDestroyOnLoad)
+        Destroy(gameObject);
     }
 
     public int GetHealth()
