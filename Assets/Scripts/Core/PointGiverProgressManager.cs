@@ -8,8 +8,10 @@ public class PointGiverProgressManager : MonoBehaviour
     [Header("Progress")]
     [SerializeField] private int totalToResolve = 10;
 
-    [Header("Scene Names")]
+    [Header("Scene Names (must match exactly)")]
+    [SerializeField] private string level1SceneName = "Level1";
     [SerializeField] private string level2SceneName = "Level2";
+    [SerializeField] private string winSceneName = "Win";
 
     private int collectedCount = 0;
     private int missedCount = 0;
@@ -25,6 +27,21 @@ public class PointGiverProgressManager : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == level1SceneName || scene.name == level2SceneName)
+        {
+            ResetProgress();
+        }
     }
 
     public void RegisterCollected()
@@ -47,21 +64,21 @@ public class PointGiverProgressManager : MonoBehaviour
     {
         int resolved = collectedCount + missedCount;
 
-        if (resolved >= totalToResolve)
+        if (resolved < totalToResolve)
+            return;
+
+        hasLoadedNext = true;
+
+        string current = SceneManager.GetActiveScene().name;
+
+        if (current == level1SceneName)
         {
-            hasLoadedNext = true;
             SceneManager.LoadScene(level2SceneName);
         }
-    }
-
-    public int GetCollected()
-    {
-        return collectedCount;
-    }
-
-    public int GetMissed()
-    {
-        return missedCount;
+        else if (current == level2SceneName)
+        {
+            SceneManager.LoadScene(winSceneName);
+        }
     }
 
     public void ResetProgress()
