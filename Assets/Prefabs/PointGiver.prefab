@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 7891750029051598751}
   - component: {fileID: 5515045336748413353}
   - component: {fileID: 5609044002861110663}
-  - component: {fileID: 6974552642468687050}
-  m_Layer: 0
+  - component: {fileID: 1173965872906539308}
+  m_Layer: 7
   m_Name: PointGiver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyBelowY: -6
---- !u!114 &6974552642468687050
+--- !u!114 &1173965872906539308
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -200,6 +200,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7896014755844980109}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4b5abb63e203fd43bb295402c1d9e41, type: 3}
+  m_Script: {fileID: 11500000, guid: 6af7376fe638b0144bc3ed9f630f612e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fallSpeed: 5

@@ -15,7 +15,5 @@ MonoBehaviour:
   spawns:
   - prefab: {fileID: 691946454582494893, guid: 9bb08ea0845bd9f42899c5fdb5b51ded, type: 3}
     count: 5
-  - prefab: {fileID: 7896014755844980109, guid: 607c13100ab71e743b9791c46bd17c26, type: 3}
-    count: 5
   pathPrefab: {fileID: 8958928128202703208, guid: 6085adcacbd70df459b882edf5e2ffe3, type: 3}
   moveSpeed: 5

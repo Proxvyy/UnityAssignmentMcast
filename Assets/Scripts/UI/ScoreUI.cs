@@ -3,29 +3,31 @@ using TMPro;
 
 public class ScoreUI : MonoBehaviour
 {
-    TextMeshProUGUI scoreText;
-    ScoreManager scoreManager;
-
-    void Awake()
-    {
-        scoreText = GetComponent<TextMeshProUGUI>();
-    }
+    [SerializeField] private TMP_Text scoreText;
 
     void Start()
     {
-        scoreManager = FindFirstObjectByType<ScoreManager>();
+        if (scoreText == null)
+        {
+            Debug.LogError("ScoreUI: scoreText is NOT assigned in Inspector.");
+        }
+        else
+        {
+            Debug.Log("ScoreUI Start: scoreText assigned OK.");
+        }
     }
 
     void Update()
     {
-        if (scoreManager == null)
+        if (scoreText == null)
+            return;
+
+        if (ScoreManager.instance == null)
         {
-            scoreManager = FindFirstObjectByType<ScoreManager>();
+            scoreText.text = "Score: ?";
+            return;
         }
 
-        if (scoreManager != null)
-        {
-            scoreText.text = "Score: " + scoreManager.GetScore().ToString();
-        }
+        scoreText.text = "Score: " + ScoreManager.instance.GetScore();
     }
 }

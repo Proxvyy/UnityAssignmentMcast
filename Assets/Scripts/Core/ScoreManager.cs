@@ -2,26 +2,28 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    public static ScoreManager Instance;
+    public static ScoreManager instance;
 
-    int score = 0;
+    [SerializeField] private int score = 0;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        if (instance != null && instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        Debug.Log("ScoreManager Awake: instance set. Current score = " + score);
     }
 
-    public void AddPoints(int points)
+    public void AddPoints(int amount)
     {
-        score += points;
+        score += amount;
+        Debug.Log("ScoreManager AddPoints: +" + amount + " => score now " + score);
     }
 
     public int GetScore()
@@ -32,5 +34,6 @@ public class ScoreManager : MonoBehaviour
     public void ResetScore()
     {
         score = 0;
+        Debug.Log("ScoreManager ResetScore: score now " + score);
     }
 }

@@ -2,27 +2,17 @@ using UnityEngine;
 
 public class PointGiverMissDetector : MonoBehaviour
 {
-    [SerializeField] float destroyBelowY = -6.0f;
-
-    bool resolved = false;
-
-    void Update()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (resolved)
-        {
+        PointGiver pg = other.GetComponent<PointGiver>();
+        if (pg == null)
             return;
-        }
 
-        if (transform.position.y < destroyBelowY)
+        if (PointGiverProgressManager.instance != null)
         {
-            resolved = true;
-
-            if (PointGiverProgressManager.Instance != null)
-            {
-                PointGiverProgressManager.Instance.RegisterResolved();
-            }
-
-            Destroy(gameObject);
+            PointGiverProgressManager.instance.RegisterMissed();
         }
+
+        Destroy(other.gameObject);
     }
 }

@@ -2,32 +2,23 @@ using UnityEngine;
 
 public class PointGiver : MonoBehaviour
 {
-    [SerializeField] int points = 5;
-
-    bool resolved = false;
+    [SerializeField] private int points = 1;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (resolved)
-        {
+        if (!other.CompareTag("Player"))
             return;
-        }
 
-        if (other.CompareTag("Player"))
+        if (ScoreManager.instance != null)
         {
-            resolved = true;
-
-            if (ScoreManager.Instance != null)
-            {
-                ScoreManager.Instance.AddPoints(points);
-            }
-
-            if (PointGiverProgressManager.Instance != null)
-            {
-                PointGiverProgressManager.Instance.RegisterResolved();
-            }
-
-            Destroy(gameObject);
+            ScoreManager.instance.AddPoints(points);
         }
+
+        if (PointGiverProgressManager.instance != null)
+        {
+            PointGiverProgressManager.instance.RegisterCollected();
+        }
+
+        Destroy(gameObject);
     }
 }

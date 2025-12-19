@@ -3,30 +3,56 @@ using UnityEngine;
 
 public class PointGiverSpawner : MonoBehaviour
 {
-    [SerializeField] PointGiverSpawnSO settings;
-    [SerializeField] int totalToSpawn = 10;
+    [Header("Settings")]
+    [SerializeField] private PointGiverSpawnSO settings;
 
-    int spawnedCount = 0;
+    [Header("Spawn Control")]
+    [SerializeField] private Transform spawnRail;
+    [SerializeField] private int totalToSpawn = 10;
+    [SerializeField] private float spawnY = 7f;
+
+    private int spawnedCount = 0;
 
     void Start()
     {
+        if (settings == null)
+        {
+            Debug.LogError("PointGiverSpawner: No PointGiverSpawnSO assigned.");
+            return;
+        }
+
+        if (spawnRail == null)
+        {
+            Debug.LogError("PointGiverSpawner: No Spawn Rail assigned.");
+            return;
+        }
+
         StartCoroutine(SpawnRoutine());
     }
 
     IEnumerator SpawnRoutine()
     {
-        if (settings == null || settings.pointGiverPrefab == null)
-        {
-            Debug.LogError("PointGiverSpawner settings or prefab is missing.");
-            yield break;
-        }
-
         while (spawnedCount < totalToSpawn)
         {
-            float wait = Random.Range(settings.minSpawnTime, settings.maxSpawnTime);
-            yield return new WaitForSeconds(wait);
+            float waitTime = Random.Range(
+                settings.minSpawnTime,
+                settings.maxSpawnTime
+            );
 
-            Instantiate(settings.pointGiverPrefab, transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(waitTime);
+
+            Vector3 spawnPos = new Vector3(
+                spawnRail.position.x,
+                spawnY,
+                0f
+            );
+
+            Instantiate(
+                settings.pointGiverPrefab,
+                spawnPos,
+                Quaternion.identity
+            );
+
             spawnedCount++;
         }
     }
