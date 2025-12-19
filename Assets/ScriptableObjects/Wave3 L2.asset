@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6ee5cf45bdd64f48b5213c3c1890270, type: 3}
-  m_Name: Wave3
+  m_Name: Wave3 L2
   m_EditorClassIdentifier: 
   spawns:
-  - prefab: {fileID: 691946454582494893, guid: deafaed83ee190e48bd923fd2bcc39eb, type: 3}
-    count: 15
-  pathPrefab: {fileID: 7186466691235618733, guid: dbbf0892311507f4083be0248e72aa2f, type: 3}
-  moveSpeed: 8
+  - prefab: {fileID: 691946454582494893, guid: bac4ff5e65872ee458afe40768589d0c, type: 3}
+    count: 5
+  pathPrefab: {fileID: 8958928128202703208, guid: 6085adcacbd70df459b882edf5e2ffe3, type: 3}
+  moveSpeed: 5

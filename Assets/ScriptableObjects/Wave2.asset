@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wave2
   m_EditorClassIdentifier: 
   spawns:
-  - prefab: {fileID: 691946454582494893, guid: 9bb08ea0845bd9f42899c5fdb5b51ded, type: 3}
+  - prefab: {fileID: 691946454582494893, guid: 3511e9c4d2c1eb44794676e0b553282a, type: 3}
     count: 10
   pathPrefab: {fileID: 4992228724696096720, guid: e75b953c6242c5f459c334151350e948, type: 3}
   moveSpeed: 8

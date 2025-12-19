@@ -2,7 +2,17 @@ using UnityEngine;
 
 public class PointGiver : MonoBehaviour
 {
-    [SerializeField] private int points = 1;
+    [SerializeField] private int points = 5;
+
+    [Header("Audio")]
+    [SerializeField, Range(0f, 2f)] private float pickupVolume = 1.2f;
+
+    private AudioSource audioSource;
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -19,6 +29,11 @@ public class PointGiver : MonoBehaviour
             PointGiverProgressManager.instance.RegisterCollected();
         }
 
-        Destroy(gameObject);
+        if (audioSource != null)
+        {
+            audioSource.PlayOneShot(audioSource.clip, pickupVolume);
+        }
+
+        Destroy(gameObject, 0.15f);
     }
 }

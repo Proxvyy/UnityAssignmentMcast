@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1978267811018427399}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.99, y: -0.65, z: 0}
+  m_LocalPosition: {x: 1.92, y: -8.17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -71,6 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5971088227269521764}
+  - component: {fileID: 6251509080905548959}
   m_Layer: 0
   m_Name: Path_Wave2
   m_TagString: Untagged
@@ -97,6 +98,23 @@ Transform:
   - {fileID: 3702845136829917442}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6251509080905548959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4992228724696096720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a525a0dd3637d974382b953a40ccef8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypoints:
+  - {fileID: 2722502533422035437}
+  - {fileID: 3830468014318188236}
+  - {fileID: 359909129169529143}
+  - {fileID: 3702845136829917442}
 --- !u!1 &6042761402637761764
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +171,7 @@ Transform:
   m_GameObject: {fileID: 8546665274509985251}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.88, y: 3.21, z: 0}
+  m_LocalPosition: {x: 0.06, y: -0.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

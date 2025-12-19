@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 215783864557340191}
   - component: {fileID: -2861459521180741597}
   - component: {fileID: 2906518952448882580}
-  - component: {fileID: 7087280439854809003}
+  - component: {fileID: -1555035960047868728}
+  - component: {fileID: 2954489107820447209}
   m_Layer: 8
-  m_Name: Obstacle
+  m_Name: Obstacle_Level2
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -190,7 +191,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 2
---- !u!114 &7087280439854809003
+--- !u!114 &-1555035960047868728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691946454582494893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff21489a409a3fd49ac5cb687f9d151f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 229780659762400198, guid: ee11e5a385c3d4e47ac41c0f9196d35d, type: 3}
+  minShootDelay: 0.5
+  maxShootDelay: 1
+--- !u!114 &2954489107820447209
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

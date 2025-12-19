@@ -3,12 +3,12 @@ using UnityEngine;
 public class ObstacleShooter : MonoBehaviour
 {
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private float minShootDelay = 1.0f;
+    [SerializeField] private float minShootDelay = 1f;
     [SerializeField] private float maxShootDelay = 2.5f;
 
     private Transform player;
 
-    void Start()
+    private void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -19,33 +19,28 @@ public class ObstacleShooter : MonoBehaviour
         ScheduleNextShot();
     }
 
-    void ScheduleNextShot()
+    private void ScheduleNextShot()
     {
         float delay = Random.Range(minShootDelay, maxShootDelay);
-        Invoke("Shoot", delay);
+        Invoke(nameof(Shoot), delay);
     }
 
-    void Shoot()
+    private void Shoot()
     {
-        if (bulletPrefab == null)
+        if (bulletPrefab == null || player == null)
         {
+            ScheduleNextShot();
             return;
         }
 
-        GameObject bulletObj = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        ObstacleBullet bullet = bulletObj.GetComponent<ObstacleBullet>();
+        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
 
-        if (bullet != null && player != null)
+        ObstacleBullet bulletScript = bullet.GetComponent<ObstacleBullet>();
+        if (bulletScript != null)
         {
-            Vector2 dir = (player.position - transform.position);
-            bullet.SetDirection(dir);
+            bulletScript.SetTarget(player);
         }
 
         ScheduleNextShot();
-    }
-
-    void OnDestroy()
-    {
-        CancelInvoke();
     }
 }
